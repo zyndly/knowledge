@@ -110,6 +110,7 @@ function Editor() {
             // Update each step's annotations
             for (const step of guide.steps) {
                 try {
+                    console.log(`Saving step ${step._id} with annotations:`, step.annotations)
                     await guidesApi.updateStep(guide._id, step._id, {
                         title: step.title,
                         description: step.description,

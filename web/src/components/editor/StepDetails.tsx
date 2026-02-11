@@ -55,19 +55,19 @@ function StepDetails({ step }: StepDetailsProps) {
                 <h3 className="section-title">Element Info</h3>
                 <div className="meta-list">
                     {step.elementLabel && (
-                        <div className="meta-item">
+                        <div key="label" className="meta-item">
                             <span className="meta-label">Label</span>
                             <span className="meta-value">{step.elementLabel}</span>
                         </div>
                     )}
                     {step.elementTag && (
-                        <div className="meta-item">
+                        <div key="tag" className="meta-item">
                             <span className="meta-label">Element</span>
                             <span className="meta-value code">{step.elementTag}</span>
                         </div>
                     )}
                     {step.selector && (
-                        <div className="meta-item">
+                        <div key="selector" className="meta-item">
                             <span className="meta-label">Selector</span>
                             <span className="meta-value code" title={step.selector}>
                                 {step.selector.length > 40
@@ -76,7 +76,7 @@ function StepDetails({ step }: StepDetailsProps) {
                             </span>
                         </div>
                     )}
-                    <div className="meta-item">
+                    <div key="url" className="meta-item">
                         <span className="meta-label">URL</span>
                         <a
                             href={step.url}

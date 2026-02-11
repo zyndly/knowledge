@@ -35,22 +35,34 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
 
         fabricRef.current = canvas
 
+        return () => {
+            canvas.dispose()
+        }
+    }, [])
+
+    // Setup event handlers separately
+    useEffect(() => {
+        const canvas = fabricRef.current
+        if (!canvas) return
+
         // Handle selection
-        canvas.on('selection:created', (e) => {
+        const handleSelectionCreated = (e: any) => {
             const obj = e.selected?.[0]
             if (obj?.data?.id) {
                 selectAnnotation(obj.data.id)
             }
-        })
+        }
 
-        canvas.on('selection:cleared', () => {
+        const handleSelectionCleared = () => {
             selectAnnotation(null)
-        })
+        }
 
         // Handle object modification
-        canvas.on('object:modified', (e) => {
+        const handleObjectModified = (e: any) => {
             const obj = e.target
             if (!obj?.data?.id) return
+
+            console.log('Object modified:', obj.type, obj.data?.type, obj.data.id)
 
             const updates: Partial<Annotation> = {
                 x: obj.left || 0,
@@ -58,24 +70,61 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
                 rotation: obj.angle || 0,
             }
 
-            if (obj.type === 'rect') {
+            // Handle rectangles
+            if (obj.data?.type === 'rect') {
                 updates.width = (obj.width || 0) * (obj.scaleX || 1)
                 updates.height = (obj.height || 0) * (obj.scaleY || 1)
             }
 
-            if (obj.type === 'line') {
-                const line = obj as fabric.Line
-                updates.endX = (line.x2 || 0) + (obj.left || 0)
-                updates.endY = (line.y2 || 0) + (obj.top || 0)
+            // Handle arrows (which are groups)
+            if (obj.data?.type === 'arrow' && obj.type === 'group') {
+                // For groups, we need to calculate the end position based on the group's transformation
+                const items = obj.getObjects()
+                if (items.length > 0) {
+                    const line = items[0] as fabric.Line
+                    // Calculate actual end position considering group transformation
+                    const endX = (line.x2 || 0) * (obj.scaleX || 1) + (obj.left || 0)
+                    const endY = (line.y2 || 0) * (obj.scaleY || 1) + (obj.top || 0)
+                    updates.endX = endX
+                    updates.endY = endY
+                }
             }
 
+            // Handle text
+            if (obj.data?.type === 'text' && (obj.type === 'i-text' || obj.type === 'text')) {
+                const textObj = obj as fabric.IText
+                updates.text = textObj.text
+                updates.fontSize = textObj.fontSize
+            }
+
+            console.log('Calling updateAnnotation with:', step._id, obj.data.id, updates)
             updateAnnotation(step._id, obj.data.id, updates)
-        })
+        }
+
+        // Handle text changes
+        const handleTextChanged = (e: any) => {
+            const obj = e.target
+            if (!obj?.data?.id) return
+
+            console.log('Text changed:', obj.data.id)
+            const textObj = obj as fabric.IText
+            updateAnnotation(step._id, obj.data.id, {
+                text: textObj.text,
+            })
+        }
+
+        canvas.on('selection:created', handleSelectionCreated)
+        canvas.on('selection:cleared', handleSelectionCleared)
+        canvas.on('object:modified', handleObjectModified)
+        canvas.on('text:changed', handleTextChanged)
 
         return () => {
-            canvas.dispose()
+            canvas.off('selection:created', handleSelectionCreated)
+            canvas.off('selection:cleared', handleSelectionCleared)
+            canvas.off('object:modified', handleObjectModified)
+            canvas.off('text:changed', handleTextChanged)
         }
-    }, [])
+    }, [step._id, updateAnnotation, selectAnnotation])
 
     // Load screenshot
     useEffect(() => {
@@ -96,7 +145,19 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
         fabric.Image.fromURL(
             getProxiedUrl(step.screenshotUrl),
             (img) => {
-                canvas.clear()
+                // Check if canvas still exists and is valid
+                const currentCanvas = fabricRef.current
+                if (!currentCanvas || !currentCanvas.getContext()) {
+                    console.log('Canvas disposed or invalid before image loaded')
+                    return
+                }
+
+                try {
+                    currentCanvas.clear()
+                } catch (err) {
+                    console.error('Error clearing canvas:', err)
+                    return
+                }
 
                 // Calculate scale to fit container
                 const containerWidth = containerRef.current?.clientWidth || 800

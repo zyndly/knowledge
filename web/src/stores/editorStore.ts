@@ -154,6 +154,9 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     updateAnnotation: (stepId, annotationId, updates) => {
         const { guide } = get()
         if (!guide) return
+        
+        console.log('Updating annotation:', { stepId, annotationId, updates })
+        
         set({
             guide: {
                 ...guide,
@@ -170,6 +173,8 @@ export const useEditorStore = create<EditorState>((set, get) => ({
             },
             isDirty: true,
         })
+        
+        console.log('isDirty set to true')
     },
 
     deleteAnnotation: (stepId, annotationId) => {
