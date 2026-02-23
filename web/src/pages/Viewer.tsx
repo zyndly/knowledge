@@ -30,7 +30,7 @@ function Viewer() {
             setIsLoading(true)
             const data = await guidesApi.getByShareId(id)
             console.log('Loaded guide:', data)
-            console.log('Steps with annotations:', data.steps.map(s => ({
+            console.log('Steps with annotations:', data.steps.map((s: any) => ({
                 id: s._id,
                 title: s.title,
                 annotations: s.annotations
@@ -154,103 +154,99 @@ function Viewer() {
 
                                 <div className="screenshot-container">
                                     <img
-                                        src={getProxiedUrl(currentStep.screenshotUrl)}
-                                        alt={`Step ${currentStepIndex + 1}`}
-                                        className="screenshot"
-                                        onLoad={(e) => {
-                                            // Store original image dimensions for annotation scaling
-                                            const img = e.currentTarget
-                                            setImageDimensions({
-                                                width: img.naturalWidth,
-                                                height: img.naturalHeight
-                                            })
-                                        }}
-                                    />
-                                    {/* Render annotations with viewBox matching original image dimensions */}
-                                    {imageDimensions && (
-                                        <svg 
-                                            className="annotations-overlay"
-                                            viewBox={`0 0 ${imageDimensions.width} ${imageDimensions.height}`}
-                                            preserveAspectRatio="none"
-                                        >
-                                            {currentStep.annotations.map((ann) => {
-                                                if (ann.type === 'arrow') {
-                                                    const dx = (ann.endX || ann.x + 100) - ann.x
-                                                    const dy = (ann.endY || ann.y) - ann.y
-                                                    const angle = Math.atan2(dy, dx)
-                                                    const arrowSize = 12
-                                                    
-                                                    return (
-                                                        <g key={ann.id}>
-                                                            {/* Arrow line */}
-                                                            <line
-                                                                x1={ann.x}
-                                                                y1={ann.y}
-                                                                x2={ann.endX || ann.x + 100}
-                                                                y2={ann.endY || ann.y}
-                                                                stroke={ann.color}
-                                                                strokeWidth={ann.strokeWidth || 3}
-                                                                strokeLinecap="round"
-                                                            />
-                                                            {/* Arrow head */}
-                                                            <polygon
-                                                                points={`0,${-arrowSize/2} ${arrowSize},0 0,${arrowSize/2}`}
-                                                                fill={ann.color}
-                                                                transform={`translate(${ann.endX || ann.x + 100}, ${ann.endY || ann.y}) rotate(${angle * 180 / Math.PI})`}
-                                                            />
-                                                        </g>
-                                                    )
-                                                }
-                                                return null
-                                            })}
-                                        </svg>
-                                    )}
-                                    {imageDimensions && currentStep.annotations.map((ann) => {
-                                        // Calculate scale factor
-                                        const container = document.querySelector('.screenshot') as HTMLImageElement
-                                        const scaleX = container ? container.width / imageDimensions.width : 1
-                                        const scaleY = container ? container.height / imageDimensions.height : 1
-                                        
-                                        if (ann.type === 'rect') {
-                                            return (
-                                                <div
-                                                    key={ann.id}
-                                                    className="annotation annotation-rect"
-                                                    style={{
-                                                        position: 'absolute',
-                                                        left: `${ann.x * scaleX}px`,
-                                                        top: `${ann.y * scaleY}px`,
-                                                        width: `${(ann.width || 0) * scaleX}px`,
-                                                        height: `${(ann.height || 0) * scaleY}px`,
-                                                        borderColor: ann.color,
-                                                        borderWidth: `${ann.strokeWidth || 3}px`,
-                                                        transform: `rotate(${ann.rotation || 0}deg)`,
-                                                        transformOrigin: 'top left',
-                                                    }}
-                                                />
-                                            )
-                                        }
-                                        if (ann.type === 'text') {
-                                            return (
-                                                <div
-                                                    key={ann.id}
-                                                    className="annotation annotation-text"
-                                                    style={{
-                                                        position: 'absolute',
-                                                        left: `${ann.x * scaleX}px`,
-                                                        top: `${ann.y * scaleY}px`,
-                                                        color: ann.color,
-                                                        fontSize: `${(ann.fontSize || 20) * scaleX}px`,
-                                                        transform: `rotate(${ann.rotation || 0}deg)`,
-                                                        transformOrigin: 'top left',
-                                                    }}
-                                                >
-                                                    {ann.text}
-                                                </div>
-                                            )
-                                        }
-                                        return null
-                                    })}
+  src={getProxiedUrl(currentStep.screenshotUrl)}
+  alt={`Step ${currentStepIndex + 1}`}
+  className="screenshot"
+  onLoad={(e) => {
+    const img = e.currentTarget
+    setImageDimensions({
+      width: img.naturalWidth,
+      height: img.naturalHeight,
+    })
+  }}
+/>
+
+{imageDimensions && (
+  <svg
+    className="annotations-overlay"
+    viewBox={`0 0 ${imageDimensions.width} ${imageDimensions.height}`}
+    preserveAspectRatio="xMidYMid meet"
+  >
+    {currentStep.annotations.map((ann) => {
+      // ARROW
+      if (ann.type === 'arrow' && ann.endX !== undefined && ann.endY !== undefined) {
+        const dx = ann.endX - ann.x
+        const dy = ann.endY - ann.y
+        const angle = Math.atan2(dy, dx)
+        const arrowSize = 12
+
+        return (
+          <g key={ann.id}>
+            <line
+              x1={ann.x}
+              y1={ann.y}
+              x2={ann.endX}
+              y2={ann.endY}
+              stroke={ann.color}
+              strokeWidth={ann.strokeWidth || 3}
+              strokeLinecap="round"
+            />
+            <polygon
+              points={`0,${-arrowSize / 2} ${arrowSize},0 0,${arrowSize / 2}`}
+              fill={ann.color}
+              transform={`translate(${ann.endX}, ${ann.endY}) rotate(${(angle * 180) / Math.PI})`}
+            />
+          </g>
+        )
+      }
+
+      // RECTANGLE
+      if (ann.type === 'rect') {
+        return (
+          <rect
+            key={ann.id}
+            x={ann.x}
+            y={ann.y}
+            width={ann.width || 0}
+            height={ann.height || 0}
+            fill="transparent"
+            stroke={ann.color}
+            strokeWidth={ann.strokeWidth || 3}
+            transform={
+              ann.rotation
+                ? `rotate(${ann.rotation}, ${ann.x}, ${ann.y})`
+                : undefined
+            }
+          />
+        )
+      }
+
+      // TEXT
+      if (ann.type === 'text') {
+        return (
+          <text
+            key={ann.id}
+            x={ann.x}
+            y={ann.y}
+            fill={ann.color}
+            fontSize={ann.fontSize || 20}
+            fontWeight="bold"
+            dominantBaseline="hanging"
+            transform={
+              ann.rotation
+                ? `rotate(${ann.rotation}, ${ann.x}, ${ann.y})`
+                : undefined
+            }
+          >
+            {ann.text}
+          </text>
+        )
+      }
+
+      return null
+    })}
+  </svg>
+)}
                                 </div>
 
                                 {currentStep.description && (

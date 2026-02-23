@@ -83,41 +83,34 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
             }
 
             // Handle arrows (which are groups)
-        if (obj.data?.type === 'arrow' && obj.type === 'group') {
-            console.log('Arrow being resized:', {
-                groupLeft: obj.left,
-                groupTop: obj.top,
-                groupScaleX: obj.scaleX,
-                groupScaleY: obj.scaleY,
-                originX: obj.originX,
-                originY: obj.originY,
-            });
-            
-            // For groups, we need to calculate the end position based on the group's transformation
-            const items = obj.getObjects()
-            if (items.length > 0) {
-                const line = items[0] as fabric.Line
-                
-                console.log('Line properties:', {
-                    x1: line.x1,
-                    y1: line.y1,
-                    x2: line.x2,
-                    y2: line.y2,
-                    lineLeft: line.left,
-                    lineTop: line.top,
-                });
-                
-                // Calculate actual end position considering group transformation
-                const endX = (line.x2 || 0) * (obj.scaleX || 1) + (obj.left || 0)
-                const endY = (line.y2 || 0) * (obj.scaleY || 1) + (obj.top || 0)
-                
-                console.log('Calculated end position:', { endX, endY });
-                
-                updates.endX = endX
-                updates.endY = endY
-            }
-        }
+        if (obj.data?.type === 'arrow' && obj instanceof fabric.Group) {
+  const line = obj.getObjects().find(
+    (o): o is fabric.Line => o.type === 'line'
+  )
 
+  if (!line) return
+
+  // Get line local points
+  const points = line.calcLinePoints()
+
+  // Transform them to absolute canvas coordinates
+  const matrix = obj.calcTransformMatrix()
+
+  const p1 = fabric.util.transformPoint(
+    new fabric.Point(points.x1, points.y1),
+    matrix
+  )
+
+  const p2 = fabric.util.transformPoint(
+    new fabric.Point(points.x2, points.y2),
+    matrix
+  )
+
+  updates.x = p1.x
+  updates.y = p1.y
+  updates.endX = p2.x
+  updates.endY = p2.y
+}
             // Handle text
             if (obj.data?.type === 'text' && (obj.type === 'i-text' || obj.type === 'text')) {
                 const textObj = obj as fabric.IText
@@ -269,40 +262,42 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
                     })
                     break
 
-                case 'arrow':
-                    // Create arrow as a group with line and triangle
-                    // Coordinates should be RELATIVE to the group, not absolute
-                    const endX = ann.endX || ann.x + 100
-                    const endY = ann.endY || ann.y
-                    const lineEndX = endX - ann.x
-                    const lineEndY = endY - ann.y
-                    const line = new fabric.Line(
-                        [0, 0, lineEndX, lineEndY],
-                        {
-                            stroke: ann.color,
-                            strokeWidth: ann.strokeWidth || 3,
-                            selectable: false,
-                        }
-                    )
+                case 'arrow': {
+  const x1 = ann.x
+  const y1 = ann.y
+  const x2 = ann.endX ?? ann.x + 100
+  const y2 = ann.endY ?? ann.y - 50
 
-                    const angle = Math.atan2(lineEndY, lineEndX)
-                    const arrowHead = new fabric.Triangle({
-                        left: lineEndX,
-                        top: lineEndY,
-                        fill: ann.color,
-                        width: 16,
-                        height: 16,
-                        angle: (angle * 180) / Math.PI + 90,
-                        originX: 'center',
-                        originY: 'center',
-                        selectable: false,
-                    })
+  const dx = x2 - x1
+  const dy = y2 - y1
+  const angle = Math.atan2(dy, dx)
 
-                    obj = new fabric.Group([line, arrowHead], {
-                        left: ann.x,
-                        top: ann.y,
-                    })
-                    break
+  const line = new fabric.Line([x1, y1, x2, y2], {
+    stroke: ann.color,
+    strokeWidth: ann.strokeWidth || 3,
+    selectable: false,
+    evented: false,
+  })
+
+  const arrowHead = new fabric.Triangle({
+    left: x2,
+    top: y2,
+    originX: 'center',
+    originY: 'center',
+    width: 14,
+    height: 14,
+    fill: ann.color,
+    angle: (angle * 180) / Math.PI + 90,
+    selectable: false,
+    evented: false,
+  })
+
+  obj = new fabric.Group([line, arrowHead], {
+    selectable: true,
+  })
+
+  break
+}
 
 
                 case 'text':
