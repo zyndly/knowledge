@@ -171,7 +171,7 @@ function Viewer() {
                                         <svg 
                                             className="annotations-overlay"
                                             viewBox={`0 0 ${imageDimensions.width} ${imageDimensions.height}`}
-                                            preserveAspectRatio="xMidYMid meet"
+                                            preserveAspectRatio="none"
                                         >
                                             {currentStep.annotations.map((ann) => {
                                                 if (ann.type === 'arrow') {

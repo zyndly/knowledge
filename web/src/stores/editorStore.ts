@@ -14,6 +14,8 @@ export interface Annotation {
     fontSize?: number
     endX?: number
     endY?: number
+    scaleX?: number
+    scaleY?: number
 }
 
 export interface Step {

@@ -1,3 +1,5 @@
+//console.log
+
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { fabric } from 'fabric'
 import type { Step, Annotation } from '../../stores/editorStore'
@@ -9,6 +11,7 @@ interface AnnotationCanvasProps {
 }
 
 function AnnotationCanvas({ step }: AnnotationCanvasProps) {
+    console.log('AnnotationCanvas rendering')
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const fabricRef = useRef<fabric.Canvas | null>(null)
     const containerRef = useRef<HTMLDivElement>(null)
@@ -47,6 +50,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
 
         // Handle selection
         const handleSelectionCreated = (e: any) => {
+            console.log('handleSelectionCreated called', e)
             const obj = e.selected?.[0]
             if (obj?.data?.id) {
                 selectAnnotation(obj.data.id)
@@ -54,11 +58,13 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
         }
 
         const handleSelectionCleared = () => {
+            console.log('handleSelectionCleared called')
             selectAnnotation(null)
         }
 
         // Handle object modification
         const handleObjectModified = (e: any) => {
+            console.log('handleObjectModified called', e)
             const obj = e.target
             if (!obj?.data?.id) return
 
@@ -77,24 +83,48 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
             }
 
             // Handle arrows (which are groups)
-            if (obj.data?.type === 'arrow' && obj.type === 'group') {
-                // For groups, we need to calculate the end position based on the group's transformation
-                const items = obj.getObjects()
-                if (items.length > 0) {
-                    const line = items[0] as fabric.Line
-                    // Calculate actual end position considering group transformation
-                    const endX = (line.x2 || 0) * (obj.scaleX || 1) + (obj.left || 0)
-                    const endY = (line.y2 || 0) * (obj.scaleY || 1) + (obj.top || 0)
-                    updates.endX = endX
-                    updates.endY = endY
-                }
+        if (obj.data?.type === 'arrow' && obj.type === 'group') {
+            console.log('Arrow being resized:', {
+                groupLeft: obj.left,
+                groupTop: obj.top,
+                groupScaleX: obj.scaleX,
+                groupScaleY: obj.scaleY,
+                originX: obj.originX,
+                originY: obj.originY,
+            });
+            
+            // For groups, we need to calculate the end position based on the group's transformation
+            const items = obj.getObjects()
+            if (items.length > 0) {
+                const line = items[0] as fabric.Line
+                
+                console.log('Line properties:', {
+                    x1: line.x1,
+                    y1: line.y1,
+                    x2: line.x2,
+                    y2: line.y2,
+                    lineLeft: line.left,
+                    lineTop: line.top,
+                });
+                
+                // Calculate actual end position considering group transformation
+                const endX = (line.x2 || 0) * (obj.scaleX || 1) + (obj.left || 0)
+                const endY = (line.y2 || 0) * (obj.scaleY || 1) + (obj.top || 0)
+                
+                console.log('Calculated end position:', { endX, endY });
+                
+                updates.endX = endX
+                updates.endY = endY
             }
+        }
 
             // Handle text
             if (obj.data?.type === 'text' && (obj.type === 'i-text' || obj.type === 'text')) {
                 const textObj = obj as fabric.IText
                 updates.text = textObj.text
                 updates.fontSize = textObj.fontSize
+                updates.scaleX = textObj.scaleX || 1
+                updates.scaleY = textObj.scaleY || 1
             }
 
             console.log('Calling updateAnnotation with:', step._id, obj.data.id, updates)
@@ -103,6 +133,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
 
         // Handle text changes
         const handleTextChanged = (e: any) => {
+            console.log('handleTextChanged called', e)
             const obj = e.target
             if (!obj?.data?.id) return
 
@@ -135,6 +166,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
 
         // Use proxy URL to bypass S3 CORS issues  
         const getProxiedUrl = (url: string) => {
+            console.log('getProxiedUrl called with:', url)
             if (url.includes('s3.') && url.includes('amazonaws.com')) {
                 // Single encode - browser will handle the rest
                 return `/api/uploads/proxy/${encodeURIComponent(url)}`
@@ -219,6 +251,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
     // Create annotation object from data
     const createAnnotationObject = useCallback(
         (ann: Annotation): fabric.Object | null => {
+            console.log('createAnnotationObject called with:', ann)
             let obj: fabric.Object | null = null
 
             switch (ann.type) {
@@ -238,8 +271,13 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
 
                 case 'arrow':
                     // Create arrow as a group with line and triangle
+                    // Coordinates should be RELATIVE to the group, not absolute
+                    const endX = ann.endX || ann.x + 100
+                    const endY = ann.endY || ann.y
+                    const lineEndX = endX - ann.x
+                    const lineEndY = endY - ann.y
                     const line = new fabric.Line(
-                        [ann.x, ann.y, ann.endX || ann.x + 100, ann.endY || ann.y],
+                        [0, 0, lineEndX, lineEndY],
                         {
                             stroke: ann.color,
                             strokeWidth: ann.strokeWidth || 3,
@@ -247,13 +285,10 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
                         }
                     )
 
-                    const angle = Math.atan2(
-                        (ann.endY || ann.y) - ann.y,
-                        (ann.endX || ann.x + 100) - ann.x
-                    )
+                    const angle = Math.atan2(lineEndY, lineEndX)
                     const arrowHead = new fabric.Triangle({
-                        left: ann.endX || ann.x + 100,
-                        top: ann.endY || ann.y,
+                        left: lineEndX,
+                        top: lineEndY,
                         fill: ann.color,
                         width: 16,
                         height: 16,
@@ -269,6 +304,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
                     })
                     break
 
+
                 case 'text':
                     obj = new fabric.IText(ann.text || 'Text', {
                         left: ann.x,
@@ -277,6 +313,8 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
                         fontSize: ann.fontSize || 20,
                         fontWeight: 'bold',
                         fill: ann.color,
+                        scaleX: ann.scaleX || 1,
+                        scaleY: ann.scaleY || 1,
                         shadow: new fabric.Shadow({
                             color: 'rgba(0,0,0,0.5)',
                             blur: 3,
@@ -302,6 +340,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
     // Handle canvas click for adding annotations
     const handleCanvasClick = useCallback(
         (e: React.MouseEvent) => {
+            console.log('handleCanvasClick called')
             if (!annotationTool || annotationTool === 'select') return
 
             const canvas = fabricRef.current
@@ -350,6 +389,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
     // Keyboard shortcuts
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            console.log('handleKeyDown called:', e.key)
             if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
                 return
             }
