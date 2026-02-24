@@ -35,7 +35,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
             selection: true,
             preserveObjectStacking: true,
         })
-
+        ;(window as any).fabricCanvas = canvas // Expose for debugging
         fabricRef.current = canvas
 
         return () => {
@@ -61,7 +61,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
             console.log('handleSelectionCleared called')
             selectAnnotation(null)
         }
-
+console.log("OBJECT MODIFIED FIRED")
         // Handle object modification
         const handleObjectModified = (e: any) => {
             console.log('handleObjectModified called', e)
@@ -110,6 +110,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
   updates.y = p1.y
   updates.endX = p2.x
   updates.endY = p2.y
+  updates.rotation = 0 // Rotation is handled by the group, so we reset it to 0 for storage
 }
             // Handle text
             if (obj.data?.type === 'text' && (obj.type === 'i-text' || obj.type === 'text')) {
@@ -294,6 +295,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
 
   obj = new fabric.Group([line, arrowHead], {
     selectable: true,
+    angle: 0,
   })
 
   break
@@ -322,7 +324,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
 
             if (obj) {
                 obj.set({
-                    data: { id: ann.id, type: ann.type },
+                    data: { id: ann.id || (ann as any)._id, type: ann.type },
                     angle: ann.rotation || 0,
                 })
             }
