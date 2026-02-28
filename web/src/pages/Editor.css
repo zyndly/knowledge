@@ -80,7 +80,9 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: var(--surface-light);
+    background-image: url(/images/background-noise.webp);
+    background-repeat: repeat;
+    background-attachment: fixed;
     overflow: auto;
 }
 

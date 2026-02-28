@@ -32,7 +32,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 16px;
+    padding: 5px 16px;
     background: var(--surface-light);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);

@@ -140,11 +140,13 @@
 .step-nav-item:hover {
     border-color: var(--border-light);
     background: var(--surface-light);
+    transform: translateX(2px);
 }
 
 .step-nav-item.active {
     border-color: var(--primary);
-    background: rgba(0, 0, 0, 0.03);
+    /* background: rgba(0, 0, 0, 0.03); */
+    background: rgba(59, 130, 246, 0.08);
 }
 
 .step-nav-number {
@@ -192,9 +194,11 @@
     letter-spacing: 0.5px;
     display: block;
     margin-bottom: 8px;
+    background: none;
+    width: auto;
 }
 
-.step-title {
+.step-title-viewer {
     font-size: 28px;
     font-weight: 600;
     color: var(--text);

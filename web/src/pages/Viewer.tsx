@@ -155,7 +155,7 @@ function Viewer() {
                   <span className="step-number">
                     Step {currentStepIndex + 1}
                   </span>
-                  <h2 className="step-title">
+                  <h2 className="step-title-viewer">
                     {currentStep.title ||
                       currentStep.elementLabel ||
                       `Step ${currentStepIndex + 1}`}

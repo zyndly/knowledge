@@ -50,6 +50,11 @@ function StepItem({ step, isSelected, onSelect }: StepItemProps) {
             className={`step-item ${isSelected ? 'selected' : ''} ${isDragging ? 'dragging' : ''}`}
             onClick={onSelect}
         >
+            {/* Step number on far left */}
+            <div className="step-number-column">
+                {step.order + 1}
+            </div>
+            
             <div className="step-drag-handle" {...attributes} {...listeners}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                     <circle cx="5" cy="4" r="1.5" />
@@ -71,7 +76,6 @@ function StepItem({ step, isSelected, onSelect }: StepItemProps) {
             </div>
 
             <div className="step-info">
-                <span className="step-number">{step.order + 1}</span>
                 <span className="step-title">
                     {step.title || step.elementLabel || `Step ${step.order + 1}`}
                 </span>
