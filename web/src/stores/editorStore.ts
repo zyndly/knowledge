@@ -90,26 +90,26 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     ...initialState,
 
     setGuide: (guide) => {
-  const normalizedGuide = {
-    ...guide,
-    steps: guide.steps.map(step => ({
-      ...step,
-      annotations: step.annotations.map((ann: any, index: number) => ({
-        ...ann,
-        id:
-          ann.id || 
-          ann._id ||
-          `ann-${step._id}-${index}-${Date.now()}`, // ← generate fallback ID
-      })),
-    })),
-  }
+    const normalizedGuide = {
+        ...guide,
+        steps: guide.steps.map(step => ({
+        ...step,
+        annotations: step.annotations.map((ann: any, index: number) => ({
+            ...ann,
+            id:
+            ann.id || 
+            ann._id ||
+            `ann-${step._id}-${index}-${Date.now()}`, // ← generate fallback ID
+        })),
+        })),
+    }
 
-  set({
-    guide: normalizedGuide,
-    selectedStepId: normalizedGuide.steps[0]?._id || null,
-    isDirty: false,
-  })
-},
+    set({
+        guide: normalizedGuide,
+        selectedStepId: normalizedGuide.steps[0]?._id || null,
+        isDirty: false,
+    })
+    },
 
     selectStep: (stepId) => {
         set({ selectedStepId: stepId, selectedAnnotationId: null })
@@ -260,4 +260,3 @@ export const useEditorStore = create<EditorState>((set, get) => ({
 
     reset: () => set(initialState),
 }))
-;(window as any).editorStore = useEditorStore // Expose for debugging
