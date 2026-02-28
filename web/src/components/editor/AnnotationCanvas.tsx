@@ -1,3 +1,5 @@
+//console.log
+
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { fabric } from 'fabric'
 import type { Step, Annotation } from '../../stores/editorStore'
@@ -9,6 +11,7 @@ interface AnnotationCanvasProps {
 }
 
 function AnnotationCanvas({ step }: AnnotationCanvasProps) {
+    console.log('AnnotationCanvas rendering')
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const fabricRef = useRef<fabric.Canvas | null>(null)
     const containerRef = useRef<HTMLDivElement>(null)
@@ -32,7 +35,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
             selection: true,
             preserveObjectStacking: true,
         })
-
+        ;(window as any).fabricCanvas = canvas // Expose for debugging
         fabricRef.current = canvas
 
         return () => {
@@ -47,6 +50,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
 
         // Handle selection
         const handleSelectionCreated = (e: any) => {
+            console.log('handleSelectionCreated called', e)
             const obj = e.selected?.[0]
             if (obj?.data?.id) {
                 selectAnnotation(obj.data.id)
@@ -54,11 +58,13 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
         }
 
         const handleSelectionCleared = () => {
+            console.log('handleSelectionCleared called')
             selectAnnotation(null)
         }
-
+console.log("OBJECT MODIFIED FIRED")
         // Handle object modification
         const handleObjectModified = (e: any) => {
+            console.log('handleObjectModified called', e)
             const obj = e.target
             if (!obj?.data?.id) return
 
@@ -77,24 +83,42 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
             }
 
             // Handle arrows (which are groups)
-            if (obj.data?.type === 'arrow' && obj.type === 'group') {
-                // For groups, we need to calculate the end position based on the group's transformation
-                const items = obj.getObjects()
-                if (items.length > 0) {
-                    const line = items[0] as fabric.Line
-                    // Calculate actual end position considering group transformation
-                    const endX = (line.x2 || 0) * (obj.scaleX || 1) + (obj.left || 0)
-                    const endY = (line.y2 || 0) * (obj.scaleY || 1) + (obj.top || 0)
-                    updates.endX = endX
-                    updates.endY = endY
-                }
-            }
+        if (obj.data?.type === 'arrow' && obj instanceof fabric.Group) {
+  const line = obj.getObjects().find(
+    (o): o is fabric.Line => o.type === 'line'
+  )
 
+  if (!line) return
+
+  // Get line local points
+  const points = line.calcLinePoints()
+
+  // Transform them to absolute canvas coordinates
+  const matrix = obj.calcTransformMatrix()
+
+  const p1 = fabric.util.transformPoint(
+    new fabric.Point(points.x1, points.y1),
+    matrix
+  )
+
+  const p2 = fabric.util.transformPoint(
+    new fabric.Point(points.x2, points.y2),
+    matrix
+  )
+
+  updates.x = p1.x
+  updates.y = p1.y
+  updates.endX = p2.x
+  updates.endY = p2.y
+  updates.rotation = 0 // Rotation is handled by the group, so we reset it to 0 for storage
+}
             // Handle text
             if (obj.data?.type === 'text' && (obj.type === 'i-text' || obj.type === 'text')) {
                 const textObj = obj as fabric.IText
                 updates.text = textObj.text
                 updates.fontSize = textObj.fontSize
+                updates.scaleX = textObj.scaleX || 1
+                updates.scaleY = textObj.scaleY || 1
             }
 
             console.log('Calling updateAnnotation with:', step._id, obj.data.id, updates)
@@ -103,6 +127,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
 
         // Handle text changes
         const handleTextChanged = (e: any) => {
+            console.log('handleTextChanged called', e)
             const obj = e.target
             if (!obj?.data?.id) return
 
@@ -135,6 +160,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
 
         // Use proxy URL to bypass S3 CORS issues  
         const getProxiedUrl = (url: string) => {
+            console.log('getProxiedUrl called with:', url)
             if (url.includes('s3.') && url.includes('amazonaws.com')) {
                 // Single encode - browser will handle the rest
                 return `/api/uploads/proxy/${encodeURIComponent(url)}`
@@ -219,6 +245,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
     // Create annotation object from data
     const createAnnotationObject = useCallback(
         (ann: Annotation): fabric.Object | null => {
+            console.log('createAnnotationObject called with:', ann)
             let obj: fabric.Object | null = null
 
             switch (ann.type) {
@@ -236,38 +263,44 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
                     })
                     break
 
-                case 'arrow':
-                    // Create arrow as a group with line and triangle
-                    const line = new fabric.Line(
-                        [ann.x, ann.y, ann.endX || ann.x + 100, ann.endY || ann.y],
-                        {
-                            stroke: ann.color,
-                            strokeWidth: ann.strokeWidth || 3,
-                            selectable: false,
-                        }
-                    )
+                case 'arrow': {
+  const x1 = ann.x
+  const y1 = ann.y
+  const x2 = ann.endX ?? ann.x + 100
+  const y2 = ann.endY ?? ann.y - 50
 
-                    const angle = Math.atan2(
-                        (ann.endY || ann.y) - ann.y,
-                        (ann.endX || ann.x + 100) - ann.x
-                    )
-                    const arrowHead = new fabric.Triangle({
-                        left: ann.endX || ann.x + 100,
-                        top: ann.endY || ann.y,
-                        fill: ann.color,
-                        width: 16,
-                        height: 16,
-                        angle: (angle * 180) / Math.PI + 90,
-                        originX: 'center',
-                        originY: 'center',
-                        selectable: false,
-                    })
+  const dx = x2 - x1
+  const dy = y2 - y1
+  const angle = Math.atan2(dy, dx)
 
-                    obj = new fabric.Group([line, arrowHead], {
-                        left: ann.x,
-                        top: ann.y,
-                    })
-                    break
+  const line = new fabric.Line([x1, y1, x2, y2], {
+    stroke: ann.color,
+    strokeWidth: ann.strokeWidth || 3,
+    selectable: false,
+    evented: false,
+  })
+
+  const arrowHead = new fabric.Triangle({
+    left: x2,
+    top: y2,
+    originX: 'center',
+    originY: 'center',
+    width: 14,
+    height: 14,
+    fill: ann.color,
+    angle: (angle * 180) / Math.PI + 90,
+    selectable: false,
+    evented: false,
+  })
+
+  obj = new fabric.Group([line, arrowHead], {
+    selectable: true,
+    angle: 0,
+  })
+
+  break
+}
+
 
                 case 'text':
                     obj = new fabric.IText(ann.text || 'Text', {
@@ -277,6 +310,8 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
                         fontSize: ann.fontSize || 20,
                         fontWeight: 'bold',
                         fill: ann.color,
+                        scaleX: ann.scaleX || 1,
+                        scaleY: ann.scaleY || 1,
                         shadow: new fabric.Shadow({
                             color: 'rgba(0,0,0,0.5)',
                             blur: 3,
@@ -289,7 +324,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
 
             if (obj) {
                 obj.set({
-                    data: { id: ann.id, type: ann.type },
+                    data: { id: ann.id || (ann as any)._id, type: ann.type },
                     angle: ann.rotation || 0,
                 })
             }
@@ -302,6 +337,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
     // Handle canvas click for adding annotations
     const handleCanvasClick = useCallback(
         (e: React.MouseEvent) => {
+            console.log('handleCanvasClick called')
             if (!annotationTool || annotationTool === 'select') return
 
             const canvas = fabricRef.current
@@ -350,6 +386,7 @@ function AnnotationCanvas({ step }: AnnotationCanvasProps) {
     // Keyboard shortcuts
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            console.log('handleKeyDown called:', e.key)
             if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
                 return
             }
