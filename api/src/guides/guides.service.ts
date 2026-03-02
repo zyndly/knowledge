@@ -589,4 +589,49 @@ export class GuidesService {
         };
         return text.replace(/[&<>"']/g, (c) => map[c]);
     }
+
+    // ============ PDF EXPORT ============
+
+    async generatePDFFromImages(images: string[]): Promise<Buffer> {
+        const PDFDocument = (await import('pdf-lib')).PDFDocument;
+
+        const pdfDoc = await PDFDocument.create();
+
+        for (const imageData of images) {
+            try {
+                // Remove the data URL prefix if present
+                const base64Data = imageData.replace(/^data:image\/\w+;base64,/, '');
+                const imageBuffer = Buffer.from(base64Data, 'base64');
+
+                // Check if PNG or JPEG
+                const isPng = imageData.startsWith('data:image/png');
+
+                let pdfImage;
+                if (isPng) {
+                    pdfImage = await pdfDoc.embedPng(imageBuffer);
+                } else {
+                    pdfImage = await pdfDoc.embedJpg(imageBuffer);
+                }
+
+                // Calculate page size to fit the image
+                const pageWidth = pdfImage.width;
+                const pageHeight = pdfImage.height;
+
+                const page = pdfDoc.addPage([pageWidth, pageHeight]);
+
+                page.drawImage(pdfImage, {
+                    x: 0,
+                    y: 0,
+                    width: pageWidth,
+                    height: pageHeight,
+                });
+            } catch (error) {
+                this.logger.error(`Failed to embed image in PDF: ${error}`);
+                // Continue with other images even if one fails
+            }
+        }
+
+        const pdfBytes = await pdfDoc.save();
+        return Buffer.from(pdfBytes);
+    }
 }

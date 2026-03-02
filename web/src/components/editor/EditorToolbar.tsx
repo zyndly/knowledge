@@ -125,9 +125,9 @@ function EditorToolbar({
                 <button className="btn btn-secondary" onClick={onPreview}>
                     👁️ Preview
                 </button>
-                <button className="btn btn-secondary" onClick={onExport}>
+                {/* <button className="btn btn-secondary" onClick={onExport}>
                     📥 Export HTML
-                </button>
+                </button> */}
                 <button
                     className="btn btn-primary"
                     onClick={onSave}

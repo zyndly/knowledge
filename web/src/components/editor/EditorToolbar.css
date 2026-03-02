@@ -25,6 +25,7 @@
     padding: 8px 0;
     min-width: 200px;
     max-width: 400px;
+    text-overflow: ellipsis;
 }
 
 .guide-title-input:focus {
