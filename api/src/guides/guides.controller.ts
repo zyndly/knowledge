@@ -1,3 +1,4 @@
+import puppeteer from 'puppeteer';
 import {
     Controller,
     Get,
@@ -205,5 +206,29 @@ export class GuidesController {
         }
         const html = await this.guidesService.exportAsHtml(guide._id.toString());
         res.send(html);
+    }
+
+    @Post(':id/export-pdf')
+    async exportGuidePDF(
+        @Param('id') id: string,
+        @Body() body: { images: string[] },
+        @Res() res: Response
+    ) {
+        try {
+            // Generate PDF from images using the service
+            const pdfBuffer = await this.guidesService.generatePDFFromImages(body.images);
+
+            res.set({
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': `attachment; filename="guide-${id}.pdf"`,
+                'Content-Length': pdfBuffer.length
+            });
+
+            res.end(pdfBuffer);
+            console.log("PDF size:", pdfBuffer.length);
+        } catch (error) {
+            console.error("PDF generation error:", error);
+            res.status(500).send('Failed to generate PDF');
+        }
     }
 }
