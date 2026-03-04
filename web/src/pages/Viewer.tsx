@@ -273,6 +273,9 @@ function Viewer() {
                       {step.title || `Step ${index + 1}`}
                     </h2>
                   </div>
+                  {step.description && (
+                    <p className="step-description">{step.description}</p>
+                  )}
                   <div className="screenshot-container">
                     <img
                       src={getProxiedUrl(step.screenshotUrl)}
@@ -371,9 +374,6 @@ function Viewer() {
                       )}
                   </div>
 
-                  {step.description && (
-                    <p className="step-description">{step.description}</p>
-                  )}
                 </div>
                 {/* FOOTER only on last page */}
                 {index === sortedSteps.length - 1 && (
@@ -419,6 +419,18 @@ function Viewer() {
                         currentStep.elementLabel ||
                         `Step ${currentStepIndex + 1}`}
                     </h2>
+                    <div className="step-meta">
+                    {currentStep.elementLabel && (
+                      <span className="meta-item">
+                         <span>{currentStep.elementLabel}</span>
+                      </span>
+                    )}
+                  </div>
+                    {currentStep.description && (
+                    <p className="step-description">
+                      {currentStep.description}
+                    </p>
+                  )}
                   </div>
 
                   <div className="screenshot-container">
@@ -527,20 +539,6 @@ function Viewer() {
                           return null;
                         })}
                       </svg>
-                    )}
-                  </div>
-
-                  {currentStep.description && (
-                    <p className="step-description">
-                      {currentStep.description}
-                    </p>
-                  )}
-
-                  <div className="step-meta">
-                    {currentStep.elementLabel && (
-                      <span className="meta-item">
-                        🎯 <strong>{currentStep.elementLabel}</strong>
-                      </span>
                     )}
                   </div>
 
