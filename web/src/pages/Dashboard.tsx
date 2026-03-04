@@ -46,8 +46,10 @@ function Dashboard() {
 
     const copyShareLink = (shareId: string) => {
         const url = `${window.location.origin}/view/${shareId}`
-        navigator.clipboard.writeText(url)
-        // Could add a toast notification here
+        navigator.clipboard.writeText(url).then(() => {
+        alert("Link copied to clipboard!");
+    });
+
     }
 
     const formatDate = (dateString: string) => {
