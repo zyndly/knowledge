@@ -17,7 +17,7 @@ function Layout() {
                 <div className="header-left">
                     <NavLink to="/dashboard" className="logo">
                         <span className="logo-icon">📸</span>
-                        <span className="logo-text">GuideScribe</span>
+                        <span className="logo-text">Cirqapture</span>
                     </NavLink>
                 </div>
 

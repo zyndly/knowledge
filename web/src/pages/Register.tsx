@@ -42,7 +42,7 @@ function Register() {
                 <div className="auth-header">
                     <div className="auth-logo">
                         <span className="logo-icon">📸</span>
-                        <span className="logo-text">GuideScribe</span>
+                        <span className="logo-text">Cirqapture</span>
                     </div>
                     <h1>Create your account</h1>
                     <p>Start creating beautiful guides today</p>

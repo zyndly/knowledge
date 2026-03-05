@@ -1,7 +1,7 @@
 {
-  "name": "guidescribe-api",
+  "name": "cirqapture-api",
   "version": "1.0.0",
-  "description": "GuideScribe API - Screenshot-based guide recorder backend",
+  "description": "Cirqapture API - Screenshot-based guide recorder backend",
   "author": "",
   "private": true,
   "license": "MIT",

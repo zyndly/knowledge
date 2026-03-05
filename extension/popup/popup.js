@@ -1,5 +1,5 @@
 /**
- * GuideScribe - Popup Script
+ * Cirqapture - Popup Script
  * Handles UI interactions and communication with background script
  */
 

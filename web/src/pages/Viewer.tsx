@@ -208,7 +208,7 @@ function Viewer() {
         <h1>{error || "Guide not found"}</h1>
         <p>The guide you're looking for doesn't exist or is not accessible.</p>
         <Link to="/" className="btn btn-primary">
-          Go to GuideScribe
+          Go to Cirqapture
         </Link>
       </div>
     );
@@ -221,7 +221,7 @@ function Viewer() {
         <div className="header-left">
           <Link to="/" className="viewer-logo">
             <span className="logo-icon">📸</span>
-            <span className="logo-text">GuideScribe</span>
+            <span className="logo-text">Cirqapture</span>
           </Link>
         </div>
         <div className="header-center">
@@ -377,7 +377,7 @@ function Viewer() {
                 {/* FOOTER only on last page */}
                 {index === sortedSteps.length - 1 && (
                   <div className="print-footer">
-                    <p>Created with GuideScribe</p>
+                    <p>Created with Cirqapture</p>
                   </div>
                 )}
               </div>
@@ -570,7 +570,7 @@ function Viewer() {
       {/* Footer */}
       <footer className="viewer-footer">
         <p>
-          Created with <Link to="/">GuideScribe</Link>
+          Created with <Link to="/">Cirqapture</Link>
         </p>
       </footer>
     </div>
