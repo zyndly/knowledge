@@ -273,6 +273,9 @@ function Viewer() {
                       {step.title || `Step ${index + 1}`}
                     </h2>
                   </div>
+                  {step.description && (
+                    <p className="step-description">{step.description}</p>
+                  )}
                   <div className="screenshot-container">
                     <img
                       src={getProxiedUrl(step.screenshotUrl)}
@@ -370,10 +373,6 @@ function Viewer() {
                         </svg>
                       )}
                   </div>
-
-                  {step.description && (
-                    <p className="step-description">{step.description}</p>
-                  )}
                 </div>
                 {/* FOOTER only on last page */}
                 {index === sortedSteps.length - 1 && (
@@ -411,14 +410,46 @@ function Viewer() {
               {currentStep && (
                 <>
                   <div className="step-header">
-                    <span className="step-number">
-                      Step {currentStepIndex + 1}
-                    </span>
+                    <div className="step-header-top">
+                      <span className="step-number">
+                        Step {currentStepIndex + 1}
+                      </span>
+
+                      <div className="navigation-buttons">
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => goToStep(currentStepIndex - 1)}
+                          disabled={currentStepIndex === 0}
+                        >
+                          ← Previous
+                        </button>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => goToStep(currentStepIndex + 1)}
+                          disabled={currentStepIndex === sortedSteps.length - 1}
+                        >
+                          Next →
+                        </button>
+                      </div>
+                    </div>
+
                     <h2 className="step-title-viewer">
                       {currentStep.title ||
                         currentStep.elementLabel ||
                         `Step ${currentStepIndex + 1}`}
                     </h2>
+                    <div className="step-meta">
+                      {currentStep.elementLabel && (
+                        <span className="meta-item">
+                          <span>{currentStep.elementLabel}</span>
+                        </span>
+                      )}
+                    </div>
+                    {currentStep.description && (
+                      <p className="step-description">
+                        {currentStep.description}
+                      </p>
+                    )}
                   </div>
 
                   <div className="screenshot-container">
@@ -528,37 +559,6 @@ function Viewer() {
                         })}
                       </svg>
                     )}
-                  </div>
-
-                  {currentStep.description && (
-                    <p className="step-description">
-                      {currentStep.description}
-                    </p>
-                  )}
-
-                  <div className="step-meta">
-                    {currentStep.elementLabel && (
-                      <span className="meta-item">
-                        🎯 <strong>{currentStep.elementLabel}</strong>
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="navigation-buttons">
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => goToStep(currentStepIndex - 1)}
-                      disabled={currentStepIndex === 0}
-                    >
-                      ← Previous
-                    </button>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => goToStep(currentStepIndex + 1)}
-                      disabled={currentStepIndex === sortedSteps.length - 1}
-                    >
-                      Next →
-                    </button>
                   </div>
                 </>
               )}
