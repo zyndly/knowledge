@@ -217,35 +217,39 @@ function Viewer() {
   return (
     <div className="viewer">
       {/* Header */}
-      <header className="viewer-header">
-        <div className="header-left">
-          <Link to="/" className="viewer-logo">
-            <span className="logo-icon">📸</span>
-            <span className="logo-text">Cirqapture</span>
-          </Link>
-        </div>
-        <div className="header-center">
-          <h1 className="guide-title">{guide.title}</h1>
-        </div>
-        <div className="header-right">
-          <button onClick={handleExportPDF} className="btn btn-secondary">
-            📥 Export PDF
-          </button>
-          <span className="step-indicator">
-            Step {currentStepIndex + 1} of {sortedSteps.length}
-          </span>
-        </div>
-      </header>
+      <div className="viewer-header-container">
+  <header className="viewer-header">
+    <div className="header-left">
+      <Link to="/" className="viewer-logo">
+        <img src="/cirqapture_logo.png" alt="Cirqapture" className="logo-icon" />
+        <span className="logo-text">Cirqapture</span>
+      </Link>
+    </div>
 
-      {/* Progress bar */}
-      <div className="progress-bar">
-        <div
-          className="progress-fill"
-          style={{
-            width: `${((currentStepIndex + 1) / sortedSteps.length) * 100}%`,
-          }}
-        />
-      </div>
+    <div className="header-center">
+      <h1 className="guide-title">{guide.title}</h1>
+    </div>
+
+    <div className="header-right">
+      <button onClick={handleExportPDF} className="btn btn-secondary">
+        📥 Export PDF
+      </button>
+      <span className="step-indicator">
+        Step {currentStepIndex + 1} of {sortedSteps.length}
+      </span>
+    </div>
+  </header>
+
+  {/* Progress bar */}
+  <div className="progress-bar">
+    <div
+      className="progress-fill"
+      style={{
+        width: `${((currentStepIndex + 1) / sortedSteps.length) * 100}%`,
+      }}
+    />
+  </div>
+</div>
 
       {/* Main content */}
       <main className="viewer-main">

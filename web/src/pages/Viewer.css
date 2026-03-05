@@ -32,29 +32,38 @@
 }
 
 /* Header */
+.viewer-header-container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+}
+
 .viewer-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
+  padding: 0 24px;
+  height: 64px;
   border-bottom: 1px solid var(--border);
 }
 
 .viewer-logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   text-decoration: none;
 }
 
 .viewer-logo .logo-icon {
-  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 .viewer-logo .logo-text {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text);
 }
@@ -86,7 +95,7 @@
 
 /* Progress bar */
 .progress-bar {
-  height: 4px;
+  height: 2px;
   background: var(--surface-light);
 }
 

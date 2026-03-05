@@ -41,7 +41,7 @@ function Register() {
             <div className="auth-container">
                 <div className="auth-header">
                     <div className="auth-logo">
-                        <span className="logo-icon">📸</span>
+                        <img src="/cirqapture_logo.png" alt="Cirqapture" className="logo-icon" />
                         <span className="logo-text">Cirqapture</span>
                     </div>
                     <h1>Create your account</h1>
