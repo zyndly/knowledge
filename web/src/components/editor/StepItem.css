@@ -21,7 +21,7 @@
 .step-item.selected {
     border-color: var(--primary);
     /* background: rgba(0, 0, 0, 0.03); */
-    background: rgba(59, 130, 246, 0.08);
+    background: rgba(36, 66, 130, 0.08);
 }
 
 .step-item.dragging {
@@ -91,7 +91,7 @@
     right: -3px;
     width: 18px;
     height: 18px;
-    background: green;
+    background: var(--accent);
     color: white;
     font-size: 9px;
     font-weight: 600;

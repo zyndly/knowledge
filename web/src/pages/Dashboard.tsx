@@ -93,7 +93,7 @@ function Dashboard() {
                     <div className="empty-icon">📸</div>
                     <h2>No guides yet</h2>
                     <p>
-                        Install the GuideScribe browser extension to start recording your
+                        Install the Cirqapture browser extension to start recording your
                         first guide. Simply click "Start Recording" and perform the actions
                         you want to capture.
                     </p>

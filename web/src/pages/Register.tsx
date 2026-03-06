@@ -41,8 +41,10 @@ function Register() {
             <div className="auth-container">
                 <div className="auth-header">
                     <div className="auth-logo">
-                        <span className="logo-icon">📸</span>
-                        <span className="logo-text">GuideScribe</span>
+                        <img src="/cirqapture_logo.png" alt="Cirqapture" className="logo-icon" />                       
+                            <span className="logo-text">
+                                <span className="logo-cirq">Cirq</span>apture
+                            </span>                        
                     </div>
                     <h1>Create your account</h1>
                     <p>Start creating beautiful guides today</p>

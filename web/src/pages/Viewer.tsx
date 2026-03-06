@@ -208,7 +208,7 @@ function Viewer() {
         <h1>{error || "Guide not found"}</h1>
         <p>The guide you're looking for doesn't exist or is not accessible.</p>
         <Link to="/" className="btn btn-primary">
-          Go to GuideScribe
+          Go to Cirqapture
         </Link>
       </div>
     );
@@ -217,35 +217,41 @@ function Viewer() {
   return (
     <div className="viewer">
       {/* Header */}
-      <header className="viewer-header">
-        <div className="header-left">
-          <Link to="/" className="viewer-logo">
-            <span className="logo-icon">📸</span>
-            <span className="logo-text">GuideScribe</span>
-          </Link>
-        </div>
-        <div className="header-center">
-          <h1 className="guide-title">{guide.title}</h1>
-        </div>
-        <div className="header-right">
-          <button onClick={handleExportPDF} className="btn btn-secondary">
-            📥 Export PDF
-          </button>
-          <span className="step-indicator">
-            Step {currentStepIndex + 1} of {sortedSteps.length}
-          </span>
-        </div>
-      </header>
+      <div className="viewer-header-container">
+  <header className="viewer-header">
+    <div className="header-left">
+      <Link to="/" className="viewer-logo">
+        <img src="/cirqapture_logo.png" alt="Cirqapture" className="logo-icon" />
+        <h1 className="logo-text">
+          <span className="logo-cirq">Cirq</span>apture
+        </h1>
+      </Link>
+    </div>
 
-      {/* Progress bar */}
-      <div className="progress-bar">
-        <div
-          className="progress-fill"
-          style={{
-            width: `${((currentStepIndex + 1) / sortedSteps.length) * 100}%`,
-          }}
-        />
-      </div>
+    <div className="header-center">
+      <h1 className="guide-title">{guide.title}</h1>
+    </div>
+
+    <div className="header-right">
+      <button onClick={handleExportPDF} className="btn btn-secondary">
+        📥 Export PDF
+      </button>
+      <span className="step-indicator">
+        Step {currentStepIndex + 1} of {sortedSteps.length}
+      </span>
+    </div>
+  </header>
+
+  {/* Progress bar */}
+  <div className="progress-bar">
+    <div
+      className="progress-fill"
+      style={{
+        width: `${((currentStepIndex + 1) / sortedSteps.length) * 100}%`,
+      }}
+    />
+  </div>
+</div>
 
       {/* Main content */}
       <main className="viewer-main">
@@ -377,7 +383,7 @@ function Viewer() {
                 {/* FOOTER only on last page */}
                 {index === sortedSteps.length - 1 && (
                   <div className="print-footer">
-                    <p>Created with GuideScribe</p>
+                    <p>Created with Cirqapture</p>
                   </div>
                 )}
               </div>
@@ -570,7 +576,7 @@ function Viewer() {
       {/* Footer */}
       <footer className="viewer-footer">
         <p>
-          Created with <Link to="/">GuideScribe</Link>
+          Created with <Link to="/">Cirqapture</Link>
         </p>
       </footer>
     </div>

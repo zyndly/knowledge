@@ -1,11 +1,13 @@
 /* CSS Reset & Variables */
 :root {
-    /* Colors - Black & White Theme */
-    --primary: #000000;
-    --primary-light: #333333;
-    --primary-dark: #000000;
+    /* Colors - Cirqapture Brand Theme */
+    --primary: #1a2f5c;
+    --primary-light: #3d5a99;
+    --primary-dark: #1a2f5c;
     --secondary: #666666;
     --secondary-light: #888888;
+
+    --accent: #C8352E;
 
     --success: #22c55e;
     --warning: #f59e0b;
@@ -24,7 +26,7 @@
     --border: rgba(0, 0, 0, 0.1);
     --border-light: rgba(0, 0, 0, 0.15);
 
-    --gradient-primary: linear-gradient(135deg, #000000 0%, #444444 100%);
+    --gradient-primary: linear-gradient(135deg, #244282 0%, #5a7cc2 100%);
     --gradient-surface: linear-gradient(180deg, var(--surface) 0%, var(--background-secondary) 100%);
 
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -146,6 +148,7 @@ a:hover {
     background: var(--primary-light);
     transform: translateY(-1px);
     box-shadow: var(--shadow-lg);
+    color: white;
 }
 
 .btn-secondary {

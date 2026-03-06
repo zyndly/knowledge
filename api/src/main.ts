@@ -34,7 +34,7 @@ async function bootstrap() {
 
     // Swagger documentation
     const config = new DocumentBuilder()
-        .setTitle('GuideScribe API')
+        .setTitle('Cirqapture API')
         .setDescription('Screenshot-based guide recorder API')
         .setVersion('1.0')
         .addBearerAuth()
@@ -44,7 +44,7 @@ async function bootstrap() {
 
     const port = process.env.PORT || 3001;
     await app.listen(port);
-    console.log(`🚀 GuideScribe API running on http://localhost:${port}`);
+    console.log(`🚀 Cirqapture API running on http://localhost:${port}`);
     console.log(`📚 API Docs available at http://localhost:${port}/api/docs`);
 }
 bootstrap();

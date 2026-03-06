@@ -1,4 +1,4 @@
-# GuideScribe - Screenshot-Based Guide Recorder
+# Cirqapture - Screenshot-Based Guide Recorder
 
 A browser-based guide recorder that captures user actions as discrete steps with screenshots, providing a web editor for annotations and interactive HTML guide exports.
 

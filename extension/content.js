@@ -1,5 +1,5 @@
 /**
- * GuideScribe - Content Script
+ * Cirqapture - Content Script
  * Captures user clicks and extracts element metadata
  */
 
