@@ -1,5 +1,5 @@
 /**
- * GuideScribe - Background Service Worker
+ * Cirqapture - Background Service Worker
  * Handles screenshot capture and communication between popup and content script
  */
 
@@ -28,7 +28,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 // Initialize on install
 chrome.runtime.onInstalled.addListener(() => {
-    console.log('GuideScribe extension installed');
+    console.log('Cirqapture extension installed');
     // Load auth token from storage
     chrome.storage.local.get(['authToken'], (result) => {
         authToken = result.authToken || null;
