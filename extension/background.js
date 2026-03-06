@@ -16,6 +16,16 @@ let currentGuideId = null;
 let recordedSteps = [];
 let authToken = null;
 
+// Re-activate capture when navigating to a new page
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (isRecording && changeInfo.status === 'complete') {
+        chrome.tabs.sendMessage(tabId, { type: 'START_CAPTURE' })
+            .catch(() => {    
+                // Ignore errors like content script not allowed         
+            });
+    }
+});
+
 // Initialize on install
 chrome.runtime.onInstalled.addListener(() => {
     console.log('GuideScribe extension installed');
