@@ -35,7 +35,9 @@ function Login() {
                 <div className="auth-header">
                     <div className="auth-logo">
                         <img src="/cirqapture_logo.png" alt="Cirqapture" className="logo-icon" />
-                        <span className="logo-text">Cirqapture</span>
+                        <span className="logo-text">
+                            <span className="logo-cirq">Cirq</span>apture
+                        </span>
                     </div>
                     <h1>Welcome back</h1>
                     <p>Sign in to your account to continue</p>

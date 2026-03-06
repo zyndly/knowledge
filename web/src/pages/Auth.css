@@ -20,7 +20,7 @@
 .auth-logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 24px;
 }
 
@@ -33,7 +33,21 @@
 .auth-logo .logo-text {
     font-size: 24px;
     font-weight: 700;
-    color: var(--text);
+    color: #1a2f5c;
+}
+
+/* Cirq letters - gradient for "Cirq" */
+.logo-cirq {
+    background: linear-gradient(
+        to bottom,
+        #1a2f5c 0%,
+        #1a2f5c 50%,
+        #C8352E 50%,
+        #C8352E 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .auth-header h1 {

@@ -52,7 +52,8 @@
 .viewer-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 8px;
   text-decoration: none;
 }
 
@@ -65,9 +66,22 @@
 .viewer-logo .logo-text {
   font-size: 20px;
   font-weight: 700;
-  color: var(--text);
+  color: #1a2f5c; 
 }
+/* Cirq letters */
+.logo-cirq {
+  background: linear-gradient(
+    to bottom,
+    #1a2f5c 0%,
+    #1a2f5c 50%,
+    #C8352E 50%,
+    #C8352E 100%
+  );
 
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 .header-center {
   flex: 1;
   text-align: center;
@@ -161,7 +175,7 @@
 .step-nav-item.active {
   border-color: var(--primary);
   /* background: rgba(0, 0, 0, 0.03); */
-  background: rgba(59, 130, 246, 0.08);
+  background: rgba(36, 66, 130, 0.08);
 }
 
 .step-nav-number {
@@ -211,7 +225,7 @@
 .step-number {
   font-size: 12px;
   font-weight: 600;
-  color: var(--primary);
+  color: var(--text);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   display: block;

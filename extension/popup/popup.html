@@ -2,90 +2,91 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=320, initial-scale=1.0">
   <title>Cirqapture</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <div class="popup-container">
     <!-- Header -->
-    <header class="header">
+    <div class="header">
       <div class="logo">
         <img src="/cirqapture_logo.png" alt="Cirqapture" class="logo-icon">
-        <span class="logo-text">Cirqapture</span>
+        <h1 class="logo-text">
+          <span class="logo-cirq">Cirq</span><span class="logo-apture">apture</span>
+        </h1>
       </div>
-    </header>
-
+    </div>
     <!-- Login View -->
-    <div id="loginView" class="view">
-      <p class="view-description">Sign in to start recording guides</p>
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" placeholder="you@example.com" required>
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" placeholder="••••••••" required>
-        </div>
-        <button type="submit" class="btn btn-primary" id="loginBtn">
-          Sign In
-        </button>
-      </form>
-      <p class="auth-footer">
-        New to Cirqapture?
-        <a href="http://localhost:5173/register" target="_blank">Create account</a>
-      </p>
-      <p id="loginError" class="error-message"></p>
-    </div>
+   <div id="loginView" class="view">
+     <p class="view-description">Sign in to start recording guides</p>
+     <form id="loginForm">
+       <div class="form-group">
+         <label for="email">Email</label>
+         <input type="email" id="email" placeholder="you@example.com" required>
+       </div>
+       <div class="form-group">
+         <label for="password">Password</label>
+         <input type="password" id="password" placeholder="••••••••" required>
+       </div>
+       <button type="submit" class="btn btn-primary" id="loginBtn">
+         Sign In
+       </button>
+     </form>
+     <p class="auth-footer">
+       New to Cirqapture?
+       <a href="http://localhost:5173/register" target="_blank">Create account</a>
+     </p>
+     <p id="loginError" class="error-message"></p>
+   </div>
 
-    <!-- Ready View (Not Recording) -->
-    <div id="readyView" class="view hidden">
-      <div class="user-info">
-        <span id="userName">Welcome!</span>
-        <button id="logoutBtn" class="btn-link">Sign Out</button>
-      </div>
-      <form id="recordForm">
-        <div class="form-group">
-          <label for="guideTitle">Guide Title</label>
-          <input type="text" id="guideTitle" placeholder="How to..." required>
-        </div>
-        <button type="submit" class="btn btn-primary btn-record" id="startBtn">
-          <span class="record-dot"></span>
-          Start Recording
-        </button>
-      </form>
-      <div class="recent-guides">
-        <a href="http://localhost:5173/dashboard" target="_blank" class="btn-link">
-          View My Guides →
-        </a>
-      </div>
-    </div>
+   <!-- Ready View (Not Recording) -->
+   <div id="readyView" class="view hidden">
+     <div class="user-info">
+       <span id="userName">Welcome!</span>
+       <button id="logoutBtn" class="btn-link">Sign Out</button>
+     </div>
+     <form id="recordForm">
+       <div class="form-group">
+         <label for="guideTitle">Guide Title</label>
+         <input type="text" id="guideTitle" placeholder="How to..." required>
+       </div>
+       <button type="submit" class="btn btn-primary btn-record" id="startBtn">
+         <span class="record-dot"></span>
+         Start Recording
+       </button>
+     </form>
+     <div class="recent-guides">
+       <a href="http://localhost:5173/dashboard" target="_blank" class="btn-link">
+         View My Guides →
+       </a>
+     </div>
+   </div>
 
-    <!-- Recording View -->
-    <div id="recordingView" class="view hidden">
-      <div class="recording-status">
-        <span class="recording-indicator">
-          <span class="pulse"></span>
-          Recording
-        </span>
-      </div>
-      <div class="step-counter">
-        <span class="count-number" id="stepCount">0</span>
-        <span class="count-label">steps captured</span>
-      </div>
-      <p class="recording-hint">
-        Click on elements to capture steps. Screenshots are taken automatically.
-      </p>
-      <div class="recording-actions">
-        <button id="stopBtn" class="btn btn-success">
-          ✓ Stop & Edit
-        </button>
-        <button id="cancelBtn" class="btn btn-ghost">
-          Cancel
-        </button>
-      </div>
-    </div>
+   <!-- Recording View -->
+   <div id="recordingView" class="view hidden">
+     <div class="recording-status">
+       <span class="recording-indicator">
+         <span class="pulse"></span>
+         Recording
+       </span>
+     </div>
+     <div class="step-counter">
+       <span class="count-number" id="stepCount">0</span>
+       <span class="count-label">steps captured</span>
+     </div>
+     <p class="recording-hint">
+       Click on elements to capture steps. Screenshots are taken automatically.
+     </p>
+     <div class="recording-actions">
+       <button id="stopBtn" class="btn btn-success">
+         ✓ Stop & Edit
+       </button>
+       <button id="cancelBtn" class="btn btn-ghost">
+         Cancel
+       </button>
+     </div>
+   </div>
   </div>
 
   <script src="popup.js"></script>
